@@ -111,7 +111,7 @@ graph TD
 The fast inner-loop signal is consistency: the fraction of observed transitions that a program correctly predicts.
 
 $$
-\text{consistency}(p) = \frac{\text{correct predictions}}{|\text{obs\_seq}|}
+\text{consistency}(p) = \frac{\text{correct predictions}}{|\text{obsSeq}|}
 $$
 
 where a prediction is correct if:
@@ -132,16 +132,16 @@ Concretely, instead of:
 
 ```
 for program in programs:
-    score = execute(program, obs_seq)
+    score = execute(program, obsSeq)
 ```
 
 the GPU version runs:
 
 ```
-scores = cuda_exec(programs_tensor, obs_tensor)
+scores = cudaExec(programsTensor, obsTensor)
 ```
 
-where `cuda_exec` is a custom CUDA kernel that maps each thread to one program-transition pair. This makes the execution time independent of k (the number of programs), up to hardware limits.
+where `cudaExec` is a custom CUDA kernel that maps each thread to one program-transition pair. This makes the execution time independent of k (the number of programs), up to hardware limits.
 
 The CPU reference achieves roughly 28 000 programs/second on a 5x5 grid. A GPU implementation should reach 10-100 million programs/second, which is the 100-1000x speedup the architecture relies on.
 
@@ -177,7 +177,7 @@ graph LR
 **Consistency (60% weight).** Fraction of observed transitions correctly predicted. This is the primary signal. A program must score 1.0 here to be marked as verified.
 
 $$
-\text{consistency} = \frac{\text{correct predictions}}{|\text{obs\_seq}|}
+\text{consistency} = \frac{\text{correct predictions}}{|\text{obsSeq}|}
 $$
 
 **Compression (15% weight).** Shorter programs are preferred. ARC tasks are designed to have compact solutions. A program of length 1 scores 1.0; each additional operation reduces the score.
@@ -189,7 +189,7 @@ $$
 **Action prediction (10% weight).** A program that always returns the input state unchanged is degenerate — it has learned nothing. This signal rewards programs that produce meaningful changes.
 
 $$
-\text{action\_pred} = \frac{\text{transitions where output} \neq \text{input}}{|\text{obs\_seq}|}
+\text{actionPred} = \frac{\text{transitions where output} \neq \text{input}}{|\text{obsSeq}|}
 $$
 
 **Counterfactual (15% weight).** Does the program behave consistently on held-out probe states? Consistent behaviour suggests a genuine rule rather than overfitting to the observed transitions.
@@ -201,7 +201,7 @@ $$
 A program is fully verified only when:
 
 1. consistency == 1.0 (explains every observed transition)
-2. obs_seq is non-empty (at least one observation has been made)
+2. obsSeq is non-empty (at least one observation has been made)
 
 The reward is soft regardless. Only the `verified` flag is hard. The agent acts greedily from a rule as soon as `verified` becomes True.
 
@@ -210,7 +210,7 @@ The reward is soft regardless. Only the `verified` flag is hard. The agent acts 
 ## Weighted reward
 
 $$
-\text{reward} = 0.60 \cdot \text{consistency} + 0.15 \cdot \text{compression} + 0.10 \cdot \text{action\_pred} + 0.15 \cdot \text{counterfactual}
+\text{reward} = 0.60 \cdot \text{consistency} + 0.15 \cdot \text{compression} + 0.10 \cdot \text{actionPred} + 0.15 \cdot \text{counterfactual}
 $$
 
 The weights can be adjusted. The 60% weight on consistency reflects that it is the necessary condition. The other three signals guide the encoder before any program reaches consistency 1.0.

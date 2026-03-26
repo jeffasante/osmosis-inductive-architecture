@@ -38,13 +38,13 @@ The contrastive loss has two cases:
 
 **Positive pair** (same behaviour):
 $$
-\mathcal{L} = \|z_i - z_j\|^2
+\mathcal{L} = \|z_{i} - z_{j}\|^2
 $$
 Minimising this pulls equivalent programs together in latent space.
 
 **Negative pair** (different behaviour):
 $$
-\mathcal{L} = \max(0,\ m - \|z_i - z_j\|)^2
+\mathcal{L} = \max(0,\ m - \|z_{i} - z_{j}\|)^2
 $$
 Minimising this pushes non-equivalent programs apart, but only until they are separated by the margin m. Once they are far enough away, the loss is zero.
 
@@ -75,6 +75,7 @@ $$
 High similarity means z is pointing in the direction of that program's equivalence class.
 
 ---
+
 ---
 
 # search — finding the right rule fast
@@ -83,7 +84,7 @@ High similarity means z is pointing in the direction of that program's equivalen
 
 The search module takes the latent z from the encoder and finds the best candidate programs. It does this in two phases to balance speed against coverage.
 
-The key systems contribution of osmosis is the GPU-parallel execution in Phase 2. The CPU reference in `search.py` runs programs sequentially. The GPU version runs all 65 536 programs simultaneously in a single kernel call.
+The key systems contribution of osmosis is the GPU-parallel execution in Phase 2. The CPU reference in `search.py` runs programs sequentially. The GPU version runs all 65,536 programs simultaneously in a single kernel call.
 
 ---
 
@@ -91,18 +92,18 @@ The key systems contribution of osmosis is the GPU-parallel execution in Phase 2
 
 ```mermaid
 graph TD
-    A["z from encoder"] --> B["Phase 1: coarse\n4 096 sketches\nexecute on first 4 obs"]
+    A["z from encoder"] --> B["Phase 1: coarse\n4,096 sketches\nexecute on first 4 obs"]
     B --> C["prune to top 128 by consistency score"]
-    C --> D["Phase 2: fine\n128 x 512 = 65 536 programs\nexecute on full obs sequence"]
+    C --> D["Phase 2: fine\n128 x 512 = 65,536 programs\nexecute on full obs sequence"]
     D --> E["top-m candidates to verifier"]
 
     style B fill:#FAEEDA,stroke:#854F0B,color:#633806
     style D fill:#E1F5EE,stroke:#0F6E56,color:#085041
 ```
 
-**Phase 1** executes 4 096 sketches against only the first 4 observations. This is fast because fewer observations means fewer interpreter calls, and sketches are short programs. The consistency score at this stage is noisy but good enough for pruning.
+**Phase 1** executes 4,096 sketches against only the first 4 observations. This is fast because fewer observations means fewer interpreter calls, and sketches are short programs. The consistency score at this stage is noisy but good enough for pruning.
 
-**Phase 2** executes 65 536 refined programs against the full observation sequence. This is the expensive step and the target for GPU acceleration.
+**Phase 2** executes 65,536 refined programs against the full observation sequence. This is the expensive step and the target for GPU acceleration.
 
 ---
 
@@ -111,7 +112,7 @@ graph TD
 The fast inner-loop signal is consistency: the fraction of observed transitions that a program correctly predicts.
 
 $$
-\text{consistency}(p) = \frac{\text{correct predictions}}{|\text{obsSeq}|}
+\text{consistency}(p) = \frac{\text{correct predictions}}{\text{obs sequence length}}
 $$
 
 where a prediction is correct if:
@@ -128,24 +129,18 @@ A program with consistency 1.0 explains every observed transition perfectly. Thi
 
 The CPU reference loops over programs sequentially. The GPU version vectorises the interpreter across the k-batch dimension.
 
-Concretely, instead of:
+Concretely, instead of scanning program by program, the GPU version runs:
 
-```
-for program in programs:
-    score = execute(program, obsSeq)
-```
-
-the GPU version runs:
-
-```
-scores = cudaExec(programsTensor, obsTensor)
+```python
+scores = cuda_exec(programs_tensor, obs_tensor)
 ```
 
-where `cudaExec` is a custom CUDA kernel that maps each thread to one program-transition pair. This makes the execution time independent of k (the number of programs), up to hardware limits.
+where `cuda_exec` is a custom CUDA kernel that maps each thread to one program-transition pair. This makes the execution time independent of k (the number of programs), up to hardware limits.
 
-The CPU reference achieves roughly 28 000 programs/second on a 5x5 grid. A GPU implementation should reach 10-100 million programs/second, which is the 100-1000x speedup the architecture relies on.
+The CPU reference achieves roughly 28,000 programs/second on a 5x5 grid. A GPU implementation should reach 10-100 million programs/second, which is the 100-1,000x speedup the architecture relies on.
 
 ---
+
 ---
 
 # verifier — scoring how good a rule is
@@ -177,7 +172,7 @@ graph LR
 **Consistency (60% weight).** Fraction of observed transitions correctly predicted. This is the primary signal. A program must score 1.0 here to be marked as verified.
 
 $$
-\text{consistency} = \frac{\text{correct predictions}}{|\text{obsSeq}|}
+\text{consistency} = \frac{\text{correct predictions}}{\text{obs sequence length}}
 $$
 
 **Compression (15% weight).** Shorter programs are preferred. ARC tasks are designed to have compact solutions. A program of length 1 scores 1.0; each additional operation reduces the score.
@@ -189,7 +184,7 @@ $$
 **Action prediction (10% weight).** A program that always returns the input state unchanged is degenerate — it has learned nothing. This signal rewards programs that produce meaningful changes.
 
 $$
-\text{actionPred} = \frac{\text{transitions where output} \neq \text{input}}{|\text{obsSeq}|}
+\text{action pred} = \frac{\text{transitions with change}}{\text{obs sequence length}}
 $$
 
 **Counterfactual (15% weight).** Does the program behave consistently on held-out probe states? Consistent behaviour suggests a genuine rule rather than overfitting to the observed transitions.
@@ -201,7 +196,7 @@ $$
 A program is fully verified only when:
 
 1. consistency == 1.0 (explains every observed transition)
-2. obsSeq is non-empty (at least one observation has been made)
+2. observations is non-empty (at least one observation has been made)
 
 The reward is soft regardless. Only the `verified` flag is hard. The agent acts greedily from a rule as soon as `verified` becomes True.
 
@@ -210,12 +205,13 @@ The reward is soft regardless. Only the `verified` flag is hard. The agent acts 
 ## Weighted reward
 
 $$
-\text{reward} = 0.60 \cdot \text{consistency} + 0.15 \cdot \text{compression} + 0.10 \cdot \text{actionPred} + 0.15 \cdot \text{counterfactual}
+\text{reward} = 0.60 \cdot \text{consist} + 0.15 \cdot \text{comp} + 0.10 \cdot \text{act} + 0.15 \cdot \text{count}
 $$
 
 The weights can be adjusted. The 60% weight on consistency reflects that it is the necessary condition. The other three signals guide the encoder before any program reaches consistency 1.0.
 
 ---
+
 ---
 
 # bridge — connecting continuous and discrete
@@ -264,7 +260,7 @@ $$
 The soft weights are:
 
 $$
-w_i = \frac{\exp((s_i + g_i) / \tau)}{\sum_j \exp((s_j + g_j) / \tau)}
+w_{i} = \frac{\exp((s_{i} + g_{i}) / \tau)}{\sum_{j} \exp((s_{j} + g_{j}) / \tau)}
 $$
 
 where s are the scores, g are Gumbel noise samples, and tau is the temperature.
@@ -280,15 +276,16 @@ Temperature is annealed linearly from 1.0 to 0.1 over training, shifting from ex
 ## Temperature annealing
 
 $$
-\tau(\text{step}) = \tau_{\text{start}} + \frac{\text{step}}{\text{annealSteps}} \cdot (\tau_{\text{end}} - \tau_{\text{start}})
+\tau(\text{step}) = \tau_{\text{initial}} + \frac{\text{step}}{\text{anneal steps}} \cdot (\tau_{\text{final}} - \tau_{\text{initial}})
 $$
 
 At step 0: tau = 1.0 (broad exploration)
-At step 10 000: tau = 0.1 (sharp exploitation)
+At step 10,000: tau = 0.1 (sharp exploitation)
 
 The gradient signal in the early training phase points in many directions simultaneously, which helps the encoder learn a diverse latent space. Late in training, the sharp temperature commits to the best programs.
 
 ---
+
 ---
 
 # agent — the full loop
@@ -333,7 +330,7 @@ Info-gain exploration asks: "which action would most reduce my uncertainty about
 For each available action a, the agent simulates what each candidate program would predict as the outcome. Actions where the candidates disagree are more informative than actions where they all agree.
 
 $$
-\text{infoGain}(a) \approx \text{fraction of cell positions where candidates disagree on outcome}
+\text{info gain} \approx \text{disagreement on outcome}
 $$
 
 The action with the highest info-gain is taken. After observing the real outcome, the candidates that predicted incorrectly can be eliminated.
@@ -361,7 +358,7 @@ The review identified three metrics as most informative:
 **Posterior concentration rate.** Does the bridge signal improve over the course of an episode? A positive slope means the encoder is learning to concentrate probability mass on better programs as evidence accumulates. This is the scientific signal that distinguishes "the system got lucky" from "the system is actually learning to reason."
 
 $$
-\text{posterior concentration} = \text{mean slope of bridge signal across episode steps}
+\text{posterior concentration} = \text{mean slope}
 $$
 
 A system that truly forms hypotheses should show increasing bridge signals as evidence narrows the posterior. A system that is just pattern-matching should show flat or noisy signals.

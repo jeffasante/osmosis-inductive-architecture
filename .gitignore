@@ -52,7 +52,7 @@ traces/
 # Allow specific weights if needed
 !osmosis/weights/placeholder.txt
 
-# 🔒 HIDE IMPLEMENTATION (Public Architecture Only)
+# HIDE IMPLEMENTATION (Public Architecture Only)
 # Ignore all source code and logic
 *.py
 osmosis/
@@ -68,7 +68,7 @@ arc_games_summary.md
 environment_files/
 get_arc_data.sh
 
-# ✅ ALLOW DOCUMENTATION & ASSETS
+# ALLOW DOCUMENTATION & ASSETS
 !README.md
 !osmosis-abstract-reasoning-task/**
 !.gitignore

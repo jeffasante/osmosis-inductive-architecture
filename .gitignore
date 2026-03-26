@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Osmosis & ARC-AGI-3 Specific
+recordings/
+logs/
+*.mp4
+*.mkv
+*.webm
+*.png
+*.jpg
+*.jpeg
+traces/
+*.npz
+
+# Allow specific weights if needed
+!osmosis/weights/placeholder.txt
+
+# 🔒 HIDE IMPLEMENTATION (Public Architecture Only)
+# Ignore all source code and logic
+*.py
+osmosis/
+results/
+tests/
+
+# ✅ ALLOW DOCUMENTATION & ASSETS
+!README.md
+!osmosis-abstract-reasoning-task/**
+!.gitignore

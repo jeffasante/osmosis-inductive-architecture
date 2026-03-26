@@ -1,0 +1,328 @@
+<style>
+.bp-root { font-family: var(--font-sans); padding: 1.5rem 0; }
+.bp-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.bp-repo { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.bp-tag { font-size: 12px; color: var(--color-text-secondary); background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 3px 10px; }
+.bp-thesis { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 1.4rem; max-width: 640px; border-left: 2px solid var(--color-border-secondary); padding-left: 12px; }
+.bp-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.65fr); gap: 16px; }
+.bp-col-label { font-size: 11px; letter-spacing: 0.07em; color: var(--color-text-tertiary); margin-bottom: 10px; }
+.bp-module { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: border-color .15s; }
+.bp-module:hover { border-color: var(--color-border-secondary); }
+.bp-module.active { border-color: var(--color-border-primary); }
+.bp-mod-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+.bp-mod-sub { font-size: 12px; color: var(--color-text-secondary); }
+.bp-pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; margin-top: 5px; }
+.pill-purple { background: #EEEDFE; color: #3C3489; }
+.pill-teal   { background: #E1F5EE; color: #085041; }
+.pill-coral  { background: #FAECE7; color: #712B13; }
+.pill-amber  { background: #FAEEDA; color: #633806; }
+.pill-gray   { background: #F1EFE8; color: #444441; }
+.pill-red    { background: #FCEBEB; color: #791F1F; }
+@media (prefers-color-scheme: dark) {
+  .pill-purple { background: #3C3489; color: #CECBF6; }
+  .pill-teal   { background: #085041; color: #9FE1CB; }
+  .pill-coral  { background: #712B13; color: #F5C4B3; }
+  .pill-amber  { background: #633806; color: #FAC775; }
+  .pill-gray   { background: #444441; color: #D3D1C7; }
+  .pill-red    { background: #791F1F; color: #F7C1C1; }
+}
+.crux-label { font-size: 10px; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin: 14px 0 6px; }
+.bp-code-panel { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px 18px; }
+.bp-code-file { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 4px; font-family: var(--font-mono); }
+.bp-code-note { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 12px; line-height: 1.5; padding-bottom: 10px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+pre { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 1.65; color: var(--color-text-primary); white-space: pre-wrap; }
+.c-kw  { color: #534AB7; }
+.c-fn  { color: #0F6E56; }
+.c-cm  { color: var(--color-text-tertiary); font-style: italic; }
+.c-str { color: #993C1D; }
+@media (prefers-color-scheme: dark) {
+  .c-kw  { color: #AFA9EC; }
+  .c-fn  { color: #5DCAA5; }
+  .c-str { color: #F0997B; }
+}
+.bp-divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.4rem 0; }
+.bp-cruxes { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-top: 4px; }
+.bp-crux { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 11px 13px; }
+.bp-crux-n { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); margin-bottom: 4px; letter-spacing: 0.04em; }
+.bp-crux-t { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.bp-crux-d { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+</style>
+
+<div class="bp-root">
+  <div class="bp-header">
+    <span class="bp-repo">osmosis</span>
+    <span class="bp-tag">v0.2 — three-crux revision</span>
+  </div>
+  <div class="bp-thesis">Can we learn a continuous proposal distribution whose geometry is aligned with the behavioral equivalence classes of a discrete DSL, so that massively parallel search becomes both efficient and trainable?</div>
+
+  <div class="bp-grid">
+    <div>
+      <div class="bp-col-label">MODULES</div>
+
+      <div class="crux-label">CONTINUOUS SIDE</div>
+      <div class="bp-module active" onclick="show('encoder')">
+        <div class="bp-mod-title">osmosis/encoder</div>
+        <div class="bp-mod-sub">Obs sequence → latent distribution</div>
+        <span class="bp-pill pill-purple">diffusion</span>
+      </div>
+
+      <div class="crux-label">CRUX 1 — DSL BIAS</div>
+      <div class="bp-module" onclick="show('dsl')">
+        <div class="bp-mod-title">osmosis/dsl</div>
+        <div class="bp-mod-sub">Coarse-to-fine grammar design</div>
+        <span class="bp-pill pill-amber">hypothesis class</span>
+      </div>
+
+      <div class="crux-label">CRUX 2 — PROPOSAL CALIBRATION</div>
+      <div class="bp-module" onclick="show('proposer')">
+        <div class="bp-mod-title">osmosis/proposer</div>
+        <div class="bp-mod-sub">Geometry ↔ behavioral equivalence</div>
+        <span class="bp-pill pill-red">alignment problem</span>
+      </div>
+
+      <div class="crux-label">CRUX 3 — BRIDGE</div>
+      <div class="bp-module" onclick="show('bridge')">
+        <div class="bp-mod-title">osmosis/bridge</div>
+        <div class="bp-mod-sub">Gradient flow: discrete → continuous</div>
+        <span class="bp-pill pill-coral">unsolved crux</span>
+      </div>
+
+      <div class="crux-label">DISCRETE SIDE</div>
+      <div class="bp-module" onclick="show('search')">
+        <div class="bp-mod-title">osmosis/search</div>
+        <div class="bp-mod-sub">GPU-parallel program execution</div>
+        <span class="bp-pill pill-teal">cuda kernels</span>
+      </div>
+      <div class="bp-module" onclick="show('verifier')">
+        <div class="bp-mod-title">osmosis/verifier</div>
+        <div class="bp-mod-sub">Soft verification + partial credit</div>
+        <span class="bp-pill pill-teal">dsl runtime</span>
+      </div>
+      <div class="bp-module" onclick="show('agent')">
+        <div class="bp-mod-title">osmosis/agent</div>
+        <div class="bp-mod-sub">Info-gain exploration loop</div>
+        <span class="bp-pill pill-gray">orchestration</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="bp-col-label">PSEUDOCODE</div>
+      <div class="bp-code-panel">
+        <div class="bp-code-file" id="code-title">osmosis/encoder.py</div>
+        <div class="bp-code-note" id="code-note"></div>
+        <pre id="code-body"></pre>
+      </div>
+    </div>
+  </div>
+
+  <hr class="bp-divider">
+  <div class="bp-col-label" style="margin-bottom:10px">THREE COUPLED CRUXES</div>
+  <div class="bp-cruxes">
+    <div class="bp-crux">
+      <div class="bp-crux-n">CRUX 1</div>
+      <div class="bp-crux-t">DSL bias</div>
+      <div class="bp-crux-d">Wrong grammar makes everything downstream look worse than it is. Language design is as important as the inference algorithm.</div>
+    </div>
+    <div class="bp-crux">
+      <div class="bp-crux-n">CRUX 2</div>
+      <div class="bp-crux-t">Proposal calibration</div>
+      <div class="bp-crux-d">Continuous geometry must align with discrete behavioral equivalence classes — smooth embeddings that don't respect program semantics are useless for search.</div>
+    </div>
+    <div class="bp-crux">
+      <div class="bp-crux-n">CRUX 3</div>
+      <div class="bp-crux-t">Bridge stability</div>
+      <div class="bp-crux-d">Gradients must flow from verified programs back to the encoder. Risk: model collapses into a fancy heuristic ranker without learning causal abstractions.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const snippets = {
+  encoder: {
+    file: 'osmosis/encoder.py',
+    note: 'Standard piece — VAE over interaction sequences. The novel claim: latent space is shaped to be a distribution over programs, not arbitrary vectors. Shaping comes from joint training with proposer.',
+    code: `<span class="c-kw">class</span> <span class="c-fn">ObsEncoder</span>(nn.Module):
+  <span class="c-kw">def</span> <span class="c-fn">forward</span>(self, obs_seq):
+    <span class="c-cm"># embed each (s, a, s') interaction triple</span>
+    tokens = self.embed(obs_seq)       <span class="c-cm"># (T, d_model)</span>
+
+    <span class="c-cm"># transformer over interaction history</span>
+    ctx = self.attn(tokens)            <span class="c-cm"># (T, d_model)</span>
+
+    <span class="c-cm"># pool → latent mean + log-var</span>
+    mu, logvar = self.pool(ctx)        <span class="c-cm"># (d_latent,) each</span>
+
+    <span class="c-cm"># reparameterise — differentiable sample</span>
+    z = mu + exp(0.5*logvar) * eps()
+    <span class="c-kw">return</span> z, mu, logvar
+
+<span class="c-cm"># z is the compressed world model —</span>
+<span class="c-cm"># a point in program-hypothesis space</span>`
+  },
+  dsl: {
+    file: 'osmosis/dsl.py',
+    note: 'CRUX 1. Wrong grammar is the silent killer — apparent inference failure is often language design failure. Coarse-to-fine: sketch at high level first, refine only promising regions. Reduces combinatorial pressure on GPU search.',
+    code: `<span class="c-cm"># Coarse-to-fine DSL — two grammar levels</span>
+<span class="c-cm"># Level 0: high-level sketch programs (short, abstract)</span>
+<span class="c-cm"># Level 1: detailed programs (long, concrete)</span>
+
+<span class="c-kw">class</span> <span class="c-fn">CoarseToFineDSL</span>:
+  <span class="c-kw">def</span> <span class="c-fn">sketch</span>(self, z):
+    <span class="c-cm"># sample from Level 0 grammar</span>
+    <span class="c-cm"># e.g. "filter(X) → transform(Y) → output"</span>
+    <span class="c-kw">return</span> self.grammar_l0.sample(z, n=<span class="c-str">4096</span>)
+
+  <span class="c-kw">def</span> <span class="c-fn">refine</span>(self, sketch, z, n=<span class="c-str">512</span>):
+    <span class="c-cm"># expand sketch → concrete Level 1 programs</span>
+    <span class="c-cm"># search space: sketch × refinement options</span>
+    <span class="c-kw">return</span> self.grammar_l1.expand(sketch, z, n)
+
+  <span class="c-kw">def</span> <span class="c-fn">execute</span>(self, prog, state, action):
+    <span class="c-cm"># deterministic interpreter — same fn used</span>
+    <span class="c-cm"># in both search (GPU batch) and verify (CPU)</span>
+    <span class="c-kw">return</span> self.runtime.run(prog, state, action)
+
+<span class="c-cm"># design question: what primitives does ARC-AGI-3</span>
+<span class="c-cm"># actually need? Phase 1 work is reverse-engineering</span>
+<span class="c-cm"># this from environment observations</span>`
+  },
+  proposer: {
+    file: 'osmosis/proposer.py',
+    note: 'CRUX 2. The geometry of latent space must respect behavioral equivalence — programs with identical I/O behavior should be neighbors. If not, search is blind. This is the alignment problem inside the hybrid.',
+    code: `<span class="c-cm"># Proposal calibration: align geometry with semantics</span>
+<span class="c-cm"># Key loss: nearby z → programs with similar behavior</span>
+
+<span class="c-kw">def</span> <span class="c-fn">behavioral_contrastive_loss</span>(z, progs, dsl):
+  <span class="c-cm"># sample probe transitions to test program behavior</span>
+  probes = sample_probes(n=<span class="c-str">64</span>)
+
+  <span class="c-cm"># execute all programs on probes → behavior vectors</span>
+  bvecs = dsl.execute_batch(progs, probes) <span class="c-cm"># (k, 64)</span>
+
+  <span class="c-cm"># programs with same behavior = positive pairs</span>
+  equiv = pairwise_equiv(bvecs)            <span class="c-cm"># (k, k) bool</span>
+
+  <span class="c-cm"># contrastive: z-neighbors should be equiv-neighbors</span>
+  z_dists  = pdist(z)                      <span class="c-cm"># (k, k)</span>
+  beh_dists = 1 - equiv.float()
+
+  <span class="c-cm"># pull equiv programs together in z-space</span>
+  <span class="c-cm"># push non-equiv programs apart</span>
+  loss = contrastive(z_dists, beh_dists)
+  <span class="c-kw">return</span> loss
+
+<span class="c-cm"># this loss is what makes the geometry useful</span>
+<span class="c-cm"># without it: beautiful embeddings, useless search</span>`
+  },
+  bridge: {
+    file: 'osmosis/bridge.py',
+    note: 'CRUX 3. Gradients must flow from discrete verifier back to continuous encoder. Three approaches — Gumbel-softmax is cleanest theoretically, REINFORCE is the fallback. Key risk: model learns to rank rather than abstract.',
+    code: `<span class="c-kw">def</span> <span class="c-fn">bridge_forward</span>(z, progs, scores):
+  <span class="c-cm"># Approach A: Gumbel-softmax (preferred)</span>
+  <span class="c-cm">#   temperature τ anneals 1.0 → 0.1 during training</span>
+  soft   = gumbel_softmax(scores, τ)      <span class="c-cm"># (k,) soft</span>
+  z_hat  = soft @ prog_embeddings         <span class="c-cm"># weighted z</span>
+
+  <span class="c-cm"># Approach B: straight-through estimator</span>
+  best   = argmax(scores)                 <span class="c-cm"># discrete</span>
+  z_ste  = z + stop_grad(best - z)        <span class="c-cm"># ST trick</span>
+
+  <span class="c-cm"># Approach C: REINFORCE (noisy fallback)</span>
+  log_p  = log_prob(progs, z)
+  reward = verify_score(progs)            <span class="c-cm"># soft, not binary</span>
+  loss   = -(log_p * stop_grad(reward)).mean()
+
+<span class="c-cm"># soft verifier score matters here —</span>
+<span class="c-cm"># hard pass/fail makes all three approaches miserable</span>
+<span class="c-cm"># open q: which is stable enough end-to-end?</span>`
+  },
+  search: {
+    file: 'osmosis/search.py',
+    note: 'Phase 2 priority — de-risks the whole agenda. If GPU search does not buy major candidate throughput, the hybrid loses its systems advantage. But if it works, even a weak proposer becomes valuable.',
+    code: `<span class="c-kw">def</span> <span class="c-fn">search</span>(z, obs_seq, dsl, k=<span class="c-str">65536</span>):
+  <span class="c-cm"># 1. coarse pass: sample from Level 0 grammar</span>
+  sketches = dsl.sketch(z)              <span class="c-cm"># (4096,)</span>
+
+  <span class="c-cm"># 2. GPU execute sketches — prune fast</span>
+  s_scores = cuda_exec(sketches, obs_seq[:4])
+  top_s    = argtopk(s_scores, m=<span class="c-str">128</span>)
+
+  <span class="c-cm"># 3. fine pass: refine top sketches only</span>
+  progs    = dsl.refine(sketches[top_s], z)  <span class="c-cm"># (128×512,)</span>
+
+  <span class="c-cm"># 4. GPU execute refined programs — full obs</span>
+  scores   = cuda_exec(progs, obs_seq)   <span class="c-cm"># (65536,)</span>
+
+  top_m = argtopk(scores, m=<span class="c-str">32</span>)
+  <span class="c-kw">return</span> progs[top_m], scores[top_m]
+
+<span class="c-cm"># cuda_exec is the custom CUDA kernel —</span>
+<span class="c-cm"># vectorises DSL interpreter across k-batch dim</span>
+<span class="c-cm"># this is the novel systems contribution</span>`
+  },
+  verifier: {
+    file: 'osmosis/verifier.py',
+    note: 'Hard pass/fail makes bridge training miserable. Four partial credit signals give smoother supervision: transition consistency, compression score, action prediction accuracy, counterfactual agreement on held-out probes.',
+    code: `<span class="c-kw">def</span> <span class="c-fn">soft_verify</span>(prog, obs_seq, dsl):
+  scores = {}
+
+  <span class="c-cm"># 1. transition consistency (main signal)</span>
+  preds  = [dsl.execute(prog, s, a) for s,a,_ in obs_seq]
+  scores[<span class="c-str">'consistency'</span>] = mean(p==s2 for p,(s,a,s2)
+                              in zip(preds, obs_seq))
+
+  <span class="c-cm"># 2. compression: shorter program = better prior</span>
+  scores[<span class="c-str">'compression'</span>] = 1.0 / (1 + len(prog))
+
+  <span class="c-cm"># 3. action prediction on held-out steps</span>
+  scores[<span class="c-str">'action_pred'</span>] = eval_action_pred(prog, dsl)
+
+  <span class="c-cm"># 4. counterfactual: does rule generalise?</span>
+  probes = sample_probes(n=<span class="c-str">16</span>)
+  scores[<span class="c-str">'counterfactual'</span>] = eval_probes(prog, probes, dsl)
+
+  <span class="c-cm"># weighted sum → scalar reward for bridge</span>
+  <span class="c-kw">return</span> weighted(scores), scores[<span class="c-str">'consistency'</span>] >= <span class="c-str">1.0</span>`
+  },
+  agent: {
+    file: 'osmosis/agent.py',
+    note: 'Info-gain exploration: when no rule is verified, act to maximally discriminate between top candidates. This is what keeps step count tight enough to score well on the ARC-AGI-3 efficiency metric.',
+    code: `<span class="c-kw">def</span> <span class="c-fn">run</span>(env, budget=<span class="c-str">50</span>):
+  obs_seq = []
+
+  <span class="c-kw">for</span> step <span class="c-kw">in</span> range(budget):
+    z, mu, lv   = encoder(obs_seq)
+    cands, scrs = search(z, obs_seq, dsl)
+    reward, verified = soft_verify(cands[0], obs_seq, dsl)
+
+    <span class="c-kw">if</span> verified:
+      <span class="c-cm"># act greedily from rule — exploration done</span>
+      <span class="c-kw">return</span> act_from_rule(cands[0], env), step
+
+    <span class="c-cm"># pick action to max discriminate top candidates</span>
+    <span class="c-cm"># = active learning over program posterior</span>
+    a = info_gain_action(cands, env)
+    s, s2 = env.step(a)
+    obs_seq.append((s, a, s2))
+
+  <span class="c-kw">return</span> <span class="c-str">None</span>, budget  <span class="c-cm"># exhausted</span>
+
+<span class="c-cm"># metrics to track:</span>
+<span class="c-cm">#   final success rate</span>
+<span class="c-cm">#   exploration steps to verification</span>
+<span class="c-cm">#   posterior concentration rate  ← most informative</span>`
+  }
+}
+
+function show(key) {
+  const s = snippets[key]
+  document.getElementById('code-title').textContent = s.file
+  document.getElementById('code-note').textContent = s.note
+  document.getElementById('code-body').innerHTML = s.code
+  document.querySelectorAll('.bp-module').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('onclick') === `show('${key}')`)
+  })
+}
+
+show('encoder')
+</script>

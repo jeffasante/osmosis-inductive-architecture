@@ -280,7 +280,7 @@ Temperature is annealed linearly from 1.0 to 0.1 over training, shifting from ex
 ## Temperature annealing
 
 $$
-\tau(\text{step}) = \tau_{\text{start}} + \frac{\text{step}}{\text{anneal\_steps}} \cdot (\tau_{\text{end}} - \tau_{\text{start}})
+\tau(\text{step}) = \tau_{\text{start}} + \frac{\text{step}}{\text{annealSteps}} \cdot (\tau_{\text{end}} - \tau_{\text{start}})
 $$
 
 At step 0: tau = 1.0 (broad exploration)
@@ -333,7 +333,7 @@ Info-gain exploration asks: "which action would most reduce my uncertainty about
 For each available action a, the agent simulates what each candidate program would predict as the outcome. Actions where the candidates disagree are more informative than actions where they all agree.
 
 $$
-\text{info\_gain}(a) \approx \text{fraction of cell positions where candidates disagree on outcome}
+\text{infoGain}(a) \approx \text{fraction of cell positions where candidates disagree on outcome}
 $$
 
 The action with the highest info-gain is taken. After observing the real outcome, the candidates that predicted incorrectly can be eliminated.

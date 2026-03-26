@@ -58,6 +58,15 @@ traces/
 osmosis/
 results/
 tests/
+page.md
+help.md
+play.ipynb
+osmosis_blueprint_v2.html
+research.md
+arc_games_data.json
+arc_games_summary.md
+environment_files/
+get_arc_data.sh
 
 # ✅ ALLOW DOCUMENTATION & ASSETS
 !README.md
